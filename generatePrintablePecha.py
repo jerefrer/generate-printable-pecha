@@ -20,19 +20,6 @@
 #     flatten().
 #     map((e) => e ? e : '{}').join(',')
 
-# ==============
-#  Installation
-# ==============
-#
-# > sudo apt-get install texlive-extra-utils poppler-utils
-#
-# ==============
-#  Usage
-# ==============
-#
-# > ./generatePrintablePDF.py input.pdf output.pdf [--autoscale]
-#
-
 import os
 import re
 import sys
