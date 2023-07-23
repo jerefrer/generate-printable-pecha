@@ -1,40 +1,93 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
-import generateOrderedPageNumbersForPrintingAsStacks
 
-if len(sys.argv) == 2 and sys.argv[1] == "test":
-    import doctest
-    doctest.testmod()
+from tkinter import Tk, Button, Label, filedialog, Checkbutton, IntVar
+import os
+import subprocess
+import re
+import time
+from tkinter import ttk
 
-elif len(sys.argv) < 3:
-    sys.exit("Usage: ./generatePrintablePDF.py input.pdf output.pdf [--autoscale]")
+from generateOrderedPageNumbersForPrintingAsStacks import generateOrderedPageNumbersForPrintingAsStacks
 
-else:
-  inputFile = sys.argv[1]
-  outputFile = sys.argv[2]
-  autoscale = len(sys.argv) == 4 and sys.argv[3] == "--autoscale"
-  noautoscale = 'false' if autoscale else 'true'
+def select_file():
+    filepath = filedialog.askopenfilename(title="Select File")
+    if filepath:
+        process_file(filepath)
 
-  pdfInfo = subprocess.check_output(['pdfinfo', inputFile])
-  p = re.compile(rb'Pages:\s*(.*)')
-  result = p.search(pdfInfo)
+def process_file(inputFile):
 
-  numberOfOneSidedPechaPages = int(result.group(1).decode())
-  pageNumbersString = generateOrderedPageNumbersForPrintingAsStacks(numberOfOneSidedPechaPages)
+    # Hide the checkbox and button during the process
+    checkbox.pack_forget()
+    select_button.pack_forget()
 
-  # pdfInfo = subprocess.check_output(['pdfinfo', inputFile])
-  # p = re.compile(rb'(Page size:\s*(.*) x (.*)) pts')
-  # result = p.search(pdfInfo)
-  # width = result.group(2).decode()
-  # height = result.group(3).decode()
-  # os.system("pdfjam input.pdf '" + pageNumbersString + "' -o reordered.pdf --papersize '{" + width + "pt," + height + "pt}'")
-  # os.system("pdfjam reordered.pdf -o output.pdf --nup 1x3 --paper a3paper --landscape")
+    # Create a progress label
+    progress_label.config(text="Processing...")
 
-  os.system(f"pdfjam '{inputFile}' '{pageNumbersString}' -o 'tempfile.pdf' --nup 1x3 --paper a3paper --landscape")
+    # Create a progress bar
+    progress_bar.start()
 
-  if autoscale:
-    os.system(f"podofocrop tempfile.pdf {outputFile}")
-    os.system(f"rm tempfile.pdf")
+    for _ in range(100):
+      time.sleep(0.1)  # Simulating the process taking some time
+      root.update_idletasks()  # Update the main event loop
+      progress_bar.step(1)  # Move the progress bar
 
-  # os.system("gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dBATCH -dColorImageResolution=300 -sOutputFile=output2.pdf output.pdf")
+    directory, filename = os.path.split(inputFile)
+    filename, ext = os.path.splitext(filename)
+
+    tempfile = os.path.join(directory, "tempfile.pdf")
+    outputFile = os.path.join(directory, filename + "_processed" + ext)
+
+    autoscale = checkbox_var.get() == 1
+
+    pdfInfo = subprocess.check_output(['pdfinfo', inputFile])
+    p = re.compile(rb'Pages:\s*(.*)')
+    result = p.search(pdfInfo)
+
+    numberOfOneSidedPechaPages = int(result.group(1).decode())
+    pageNumbersString = generateOrderedPageNumbersForPrintingAsStacks(numberOfOneSidedPechaPages)
+
+    os.system(f"pdfjam '{inputFile}' '{pageNumbersString}' -o '{tempfile}' --nup 1x3 --paper a3paper --landscape")
+
+    if autoscale:
+      os.system(f"podofocrop '{tempfile}' '{outputFile}'")
+      os.system(f"rm '{tempfile}'")
+    else:
+      os.system(f"mv '{tempfile}' '{outputFile}")
+
+    progress_bar.stop()
+    progress_label.config(text="Processing Complete")
+
+    # Show the checkbox and button after the process is complete
+    checkbox.pack()
+    select_button.pack()
+
+root = Tk()
+root.title("File Processing Application")
+
+# Add some padding and set the window size
+root.geometry("400x150")
+root.configure(padx=10, pady=10)
+
+# Create a label for displaying progress and saving messages
+progress_label = Label(root, text="")
+progress_label.pack()
+
+save_label = Label(root, text="")
+save_label.pack()
+
+# Create a button with custom styling
+select_button = Button(root, text="Select File", command=select_file, padx=10, pady=5, width=20)
+select_button.pack()
+
+# Create a checkbox
+checkbox_var = IntVar()
+checkbox = Checkbutton(root, text="Autoscale", variable=checkbox_var)
+checkbox.pack()
+
+# Create a progress bar
+progress_bar = ttk.Progressbar(root, mode='indeterminate')
+progress_bar.pack(pady=10)
+
+root.mainloop()

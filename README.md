@@ -3,7 +3,8 @@
 ## MacOS
 
 ```
-  $ sudo port install pdfjam poppler
+  $ sudo port install pdfjam poppler py-tkinter
+  $ sudo port install tk +quarks
 ```
 
 ## Linux
