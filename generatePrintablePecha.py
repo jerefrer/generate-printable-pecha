@@ -111,7 +111,8 @@ elif len(sys.argv) < 3:
 else:
   inputFile = sys.argv[1]
   outputFile = sys.argv[2]
-  noautoscale = 'false' if len(sys.argv) == 4 and sys.argv[3] == "--autoscale" else 'true'
+  autoscale = len(sys.argv) == 4 and sys.argv[3] == "--autoscale"
+  noautoscale = 'false' if autoscale else 'true'
 
   pdfInfo = subprocess.check_output(['pdfinfo', inputFile])
   p = re.compile(rb'Pages:\s*(.*)')
@@ -128,6 +129,10 @@ else:
   # os.system("pdfjam input.pdf '" + pageNumbersString + "' -o reordered.pdf --papersize '{" + width + "pt," + height + "pt}'")
   # os.system("pdfjam reordered.pdf -o output.pdf --nup 1x3 --paper a3paper --landscape")
 
-  os.system(f"pdfjam '{inputFile}' '{pageNumbersString}' -o '{outputFile}' --nup 1x3 --noautoscale {noautoscale} --paper a3paper --landscape")
+  os.system(f"pdfjam '{inputFile}' '{pageNumbersString}' -o 'tempfile.pdf' --nup 1x3 --paper a3paper --landscape")
+
+  if autoscale:
+    os.system(f"podofocrop tempfile.pdf {outputFile}")
+    os.system(f"rm tempfile.pdf")
 
   # os.system("gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dBATCH -dColorImageResolution=300 -sOutputFile=output2.pdf output.pdf")
