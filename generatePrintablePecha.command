@@ -17,7 +17,6 @@ def select_file():
     if filepath := filedialog.askopenfilename(title="Select File"):
         global inputFilePath
         inputFilePath = filepath
-        print(inputFilePath)
         _, inputFileName = os.path.split(inputFilePath)
         file_selected_label.config(text=f"File selected: {inputFileName}")
         process_button.pack()
@@ -42,13 +41,19 @@ def process_file():
     numberOfOneSidedPechaPages = int(result[1].decode())
     pageNumbersString = orderedPageNumbers(numberOfOneSidedPechaPages)
 
-    os.system(f"pdfjam '{inputFilePath}' '{pageNumbersString}' -o '{tempfile}' --nup 1x3 --paper a3paper --landscape")
+    subprocess.call([
+        'pdfjam', inputFilePath, pageNumbersString,
+        '-o', tempfile,
+        '--nup', '1x3',
+        '--paper', 'a3paper',
+        '--landscape'
+    ])
 
     if autoscale:
-      os.system(f"podofocrop '{tempfile}' '{outputFilePath}'")
-      os.system(f"rm '{tempfile}'")
+      subprocess.call(['podofocrop', tempfile, outputFilePath])
+      subprocess.call(['rm', tempfile])
     else:
-      os.system(f"mv '{tempfile}' '{outputFilePath}'")
+      subprocess.call(['mv', tempfile, outputFilePath])
 
     progress_label.config(text=f"Done! New file generated: {outputFileName}")
 
