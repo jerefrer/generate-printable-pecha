@@ -9,14 +9,13 @@ import re
 import time
 from tkinter import ttk
 
-from generateOrderedPageNumbersForPrintingAsStacks import generateOrderedPageNumbersForPrintingAsStacks
+from orderedPageNumbers.orderedPageNumbers import orderedPageNumbers
 
 inputFilePath = ''
 
 def select_file():
-    filepath = filedialog.askopenfilename(title="Select File")
-    if filepath:
-        global inputFilePath 
+    if filepath := filedialog.askopenfilename(title="Select File"):
+        global inputFilePath
         inputFilePath = filepath
         print(inputFilePath)
         _, inputFileName = os.path.split(inputFilePath)
@@ -31,7 +30,7 @@ def process_file():
     filename, ext = os.path.splitext(filename)
 
     tempfile = os.path.join(directory, "tempfile.pdf")
-    outputFileName = filename + "_processed" + ext
+    outputFileName = f"{filename}_processed{ext}"
     outputFilePath = os.path.join(directory, outputFileName)
 
     autoscale = checkbox_var.get() == 1
@@ -40,8 +39,8 @@ def process_file():
     p = re.compile(rb'Pages:\s*(.*)')
     result = p.search(pdfInfo)
 
-    numberOfOneSidedPechaPages = int(result.group(1).decode())
-    pageNumbersString = generateOrderedPageNumbersForPrintingAsStacks(numberOfOneSidedPechaPages)
+    numberOfOneSidedPechaPages = int(result[1].decode())
+    pageNumbersString = orderedPageNumbers(numberOfOneSidedPechaPages)
 
     os.system(f"pdfjam '{inputFilePath}' '{pageNumbersString}' -o '{tempfile}' --nup 1x3 --paper a3paper --landscape")
 

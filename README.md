@@ -15,6 +15,5 @@
 
 #  Usage
 
-```
-  $ ./generatePrintablePDF.py input.pdf output.pdf [--autoscale]
-```
+Just click on `generatePrintablePDF.command`, then select your input file and
+press "Go"
