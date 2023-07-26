@@ -43,7 +43,7 @@ def process_file():
     numberOfOneSidedPechaPages = int(result.group(1).decode())
     pageNumbersString = generateOrderedPageNumbersForPrintingAsStacks(numberOfOneSidedPechaPages)
 
-    os.system(f"pdfjam '{inputFilePath}' '{pageNumbersString}' -o '{tempfile}' --nup 1x3 --paper a3paper --noautoscale=true --landscape")
+    os.system(f"pdfjam '{inputFilePath}' '{pageNumbersString}' -o '{tempfile}' --nup 1x3 --paper a3paper --landscape")
 
     if autoscale:
       os.system(f"podofocrop '{tempfile}' '{outputFilePath}'")
@@ -54,7 +54,7 @@ def process_file():
     progress_label.config(text=f"Done! New file generated: {outputFileName}")
 
 root = Tk()
-root.title("GeneratePrintablePecha")
+root.title("File Processing Application")
 
 root.geometry("540x260")
 root.configure(padx=10, pady=10)
