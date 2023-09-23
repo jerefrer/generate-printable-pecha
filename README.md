@@ -10,8 +10,13 @@
 ## Linux
 
 ```
-  $ sudo apt-get install texlive-extra-utils poppler-utils
+  $ sudo apt-get install texlive-extra-utils poppler-utils podofo-utils
 ```
+
+## Windows
+
+Windows is not supported, but it works very well in Windows Subsystem for Linux.
+Just install Ubuntu in WSL and run the above commands.
 
 #  Usage
 
