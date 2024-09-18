@@ -4,9 +4,6 @@ from .process_file import process_file
 
 root = Tk()
 
-icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'icon.png')
-root.iconphoto(False, PhotoImage(file=icon_path))
-
 input_file_path = ''
 
 def select_file():
