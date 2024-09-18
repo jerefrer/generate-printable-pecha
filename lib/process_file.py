@@ -27,7 +27,13 @@ def process_file(input_file_path, paper_size, autoscale, verbose):
         '--landscape',
         '--paper', 'a3paper' if paper_size == "A3" else 'a4paper',
         '--noautoscale', 'true' if not autoscale or autoscale == "podofo" else 'false'
-    ] + (['--quiet'] if not verbose else [])
+    ]
+
+    if not verbose:
+        options.append('--quiet')
+
+    if autoscale != 'podofo':
+        options.extend(['--trim', '0mm -4.2mm 0mm -4.2mm', '--clip', 'true'])
 
     subprocess.call(options)
 
