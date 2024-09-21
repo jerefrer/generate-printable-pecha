@@ -3,12 +3,13 @@ import re
 import os
 from .ordered_page_numbers.ordered_page_numbers import ordered_page_numbers
 
-def process_file(input_file_path, paper_size, autoscale, verbose):
+def process_file(input_file_path, paper_size, autoscale, verbose, output_file_name=None):
     directory, filename = os.path.split(input_file_path)
     filename, ext = os.path.splitext(filename)
 
     tempfile_path = os.path.join(directory, "tempfile.pdf")
-    output_file_name = f"{filename}_processed{ext}"
+    if output_file_name is None:
+        output_file_name = f"{filename}_processed{ext}"
     output_file_path = os.path.join(directory, output_file_name)
 
     pdfInfo = subprocess.check_output(['pdfinfo', input_file_path])
