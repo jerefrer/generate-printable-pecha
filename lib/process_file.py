@@ -3,7 +3,7 @@ import re
 import os
 from .ordered_page_numbers.ordered_page_numbers import ordered_page_numbers
 
-def process_file(input_file_path, paper_size, autoscale, verbose, output_file_name=None):
+def process_file(input_file_path, output_file_name=None, paper_size="A4", pages_per_sheet=3, autoscale="pfdjam", portrait=False, verbose=False):
     directory, filename = os.path.split(input_file_path)
     filename, ext = os.path.splitext(filename)
 
@@ -18,17 +18,25 @@ def process_file(input_file_path, paper_size, autoscale, verbose, output_file_na
 
     number_of_one_sided_pecha_pages = int(result[1].decode())
     page_numbers_string = ordered_page_numbers(number_of_one_sided_pecha_pages)
-
-    print(autoscale)
+    
+    # print args
+    print(f"Processing {input_file_path}...")
+    print(f"  Paper size: {paper_size}")
+    print(f"  Pages per sheet: {pages_per_sheet}")
+    print(f"  Autoscale: {autoscale}")
+    print(f"  Portrait: {portrait}")
+    print(f"  Verbose: {verbose}")
 
     options = [
         'pdfjam', input_file_path, page_numbers_string,
         '-o', tempfile_path,
-        '--nup', '1x3',
-        '--landscape',
+        '--nup', f"1x{pages_per_sheet}",
         '--paper', 'a3paper' if paper_size == "A3" else 'a4paper',
         '--noautoscale', 'true' if not autoscale or autoscale == "podofo" else 'false'
     ]
+    
+    if not portrait:
+        options.append('--landscape')
 
     if not verbose:
         options.append('--quiet')
@@ -42,7 +50,7 @@ def process_file(input_file_path, paper_size, autoscale, verbose, output_file_na
         stdout_option = None if verbose else subprocess.DEVNULL
         subprocess.call(['podofocrop', tempfile_path, output_file_path], stdout=stdout_option)
         if verbose:
-            print(f"  Removed tempfile.pdf.")
+            print("  Removed tempfile.pdf.")
         subprocess.call(['rm', tempfile_path])
     else:
         if verbose:
