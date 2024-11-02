@@ -16,7 +16,7 @@
 ## Windows
 
 Windows is not supported, but it works very well in Windows Subsystem for Linux.
-Just install Ubuntu in WSL and run the above commands.
+Just install Ubuntu in WSL and run the above command.
 
 #  Usage
 
