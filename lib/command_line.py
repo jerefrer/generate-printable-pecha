@@ -1,7 +1,7 @@
 import argparse
 from .process_file import process_file
 
-def parse_borders(value):
+def parse_margins(value):
     values = [float(i) for i in value.split()]
     if len(values) == 1:
         return tuple(values[0] for _ in range(4))
@@ -11,7 +11,7 @@ def parse_borders(value):
     elif len(values) == 4:
         return tuple(values)
     else:
-        raise argparse.ArgumentTypeError('Borders must be specified as either 1, 2 or 4 space-separated values')
+        raise argparse.ArgumentTypeError('margins must be specified as either 1, 2 or 4 space-separated values')
 
 parser = argparse.ArgumentParser(description='Generate a printable pecha PDF.')
 parser.add_argument('input', help='Input PDF file path')
@@ -21,13 +21,15 @@ parser.add_argument('--pages-per-sheet', help='Optional - Number of pecha pages 
 parser.add_argument('--autoscale', help='Optional - none, pfdjam, podofo (default: pdfjam)', nargs="?", default='pdfjam')
 parser.add_argument('--portrait', help='Optional - Use portrait orientation instead of landscape', action='store_const', const=True, default=False)
 parser.add_argument('--verbose', help='Optional - Shows process commentary', action='store_const', const=True, default=False)
-parser.add_argument('--borders',
-    help='''Optional - Specify border values in mm. Can be:
-    - Single value for all borders: "5"
+parser.add_argument('--sheet-margins',
+    help='''Optional - Specify margin values in mm applied to the pdf pages. They can be:
+    - A single value for all margins: "5"
     - Two values for horizontal/vertical: "5 4.2"
     - Four values (left bottom right top): "5 4.2 5 4.2"
-    Values can be negative for trimming.''',
-    type=parse_borders,
+    Values can be negative for trimming.
+    You can for example set it to "0 4.2" and print without adjustments if your printer has a 4.2mm margin where it cannot print.
+    In that way all the stripes will have the same height including the first and last one.''',
+    type=parse_margins,
     metavar='VALUES'
 )
 args = parser.parse_args()

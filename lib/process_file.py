@@ -9,7 +9,7 @@ def process_file(
     paper_size="A4",
     pages_per_sheet=3,
     autoscale="pfdjam",
-    borders=None,
+    sheet_margins=None,
     portrait=False,
     verbose=False
 ):
@@ -36,8 +36,8 @@ def process_file(
         print(f"  Autoscale: {autoscale}")
         print(f"  Portrait: {portrait}")
         print(f"  Verbose: {verbose}")
-        if borders:
-            print(f"  Borders: left={borders[0]}mm, bottom={borders[1]}mm, right={borders[2]}mm, top={borders[3]}mm")
+        if sheet_margins:
+            print(f"  Sheet margins: left={sheet_margins[0]}mm, bottom={sheet_margins[1]}mm, right={sheet_margins[2]}mm, top={sheet_margins[3]}mm")
 
     options = [
         'pdfjam', input_file_path, page_numbers_string,
@@ -55,8 +55,8 @@ def process_file(
     if not verbose:
         options.append('--quiet')
 
-    if borders:
-        border_string = f"{borders[0]}mm {borders[1]}mm {borders[2]}mm {borders[3]}mm"
+    if sheet_margins:
+        border_string = f"{sheet_margins[0]}mm {sheet_margins[1]}mm {sheet_margins[2]}mm {sheet_margins[3]}mm"
         options.extend(['--trim', border_string, '--clip', 'true'])
 
     subprocess.call(options)
